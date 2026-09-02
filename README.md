@@ -1,41 +1,69 @@
-# 🚀 Manager Rocket 3000 🚀
+# Manager Rocket 3000
 
-<img src="public\manager-rocket.svg" alt="Manager Rocket 3000" width="50%" text-align="center">
+Lightspeed Retail (R-Series) helper for warehouse UPC updates. Scan the internal SKU, scan a 12-digit UPC, write it to the POS.
 
-🔓 Unlock your Lightspeed store's full potential!
-
-Manager Rocket 3000 is a web app designed to skyrocket your efficiency by integrating with your Lightspeed store seamlessly. Built with Nextjs and connected to the Lightspeed API, this project aims to bridge the feature gap of the Lightspeed store.
-
-Currently, I implemented one feature, the UPC Rocket.
+Hosted as a Cloudflare Worker (SPA + API). No container, no Google Cloud.
 
 ## UPC Rocket
 
-UPC Rocket is a straightforward form that allows you to scan a product's internal barcode and then update the product with the UPC code directly on your Lightspeed store database. This allows you to identify the product on other marketplaces, like Amazon.
-Just load it on your phone/tablet with a Bluetooth scanner, and it'll be a breeze to update your inventory.
+1. Sign in with Lightspeed (`employee:inventory`).
+2. Scan `systemSku` (Bluetooth scanner = keyboard + Enter).
+3. Scan a UPC-A. 13-digit scans with a leading `0` are normalized to 12 digits.
+4. The Worker refuses the write if that UPC already belongs to another item.
 
-## How to run
+## Local
 
-To use this app, you need to register the https link to the app on Lightspeed [here](https://cloud.lightspeedapp.com/oauth/register.php), and then put the client and secret in the `.env` file. The callback URL for the oauth flow is `https://domain.com/api/auth/callback/lightspeed`.
+```sh
+cp .dev.vars.example .dev.vars
+# fill LIGHTSPEED_CLIENT_ID, LIGHTSPEED_CLIENT_SECRET, AUTH_SECRET
+# AUTH_SECRET: openssl rand -base64 32
+npm install
+npm run dev
+```
 
-Use the 'one click login' to go to the Lightspeed authentication using the `employee:inventory` scope.
+Lightspeed OAuth apps require HTTPS. Use a Cloudflare tunnel (`npx wrangler tunnel` / Vite plugin tunnel) or register `https://localhost:5173/api/auth/callback/lightspeed` if you terminate TLS locally. The production callback path matches the old NextAuth provider (`/api/auth/callback/lightspeed`).
 
-**[Access app here](https://manager-rocket-3000.damiengoehrig.ca/)**
+## Lightspeed app
 
-Defined as a blank canvas, Manager Rocket 3000 lets you add store-related features that Lightspeed might be missing. Inceptionally, Manager Rocket 3000 is a reboot project of the original Manager Rocket, a key tool previously built in PHP with a lot of custom-made features.
+Register at [Lightspeed OAuth](https://cloud.lightspeedapp.com/oauth/register.php).
 
-## History
+Redirect URL:
 
-The original project "Manager Rocket" was an internally built software several years ago for a store using a local POS and a SQL database. It didn't have a framework and was insecure to the extent that making it accessible over internet would have been a terrible idea. Towards the end of its life, it turned out to be a crucial tool for the shop with a lot of features custom made for many employee needs. However, it was then replaced by an online POS (Lightspeed) and a Shopify store. Most of the features were implemented with these solutions, except for UPC Rocket. Hence, the birth of this repository.
+```
+https://manager-rocket-3000.damiengoehrig.ca/api/auth/callback/lightspeed
+```
 
-In its previous avatar, Manager Rocket had an array of features :
+Scope: `employee:inventory`.
 
-- UPC Rocket
-- A complete Online Order workflow
-- An interface aiding to update products for website synchronization (with Nitrosell)
-- Reporting and invoicing
-- Product thumbnail assets generator for the website
-- Label generator for the store
+OAuth still uses the original R-Series PHP endpoints (the app was registered against these):
 
-These features hold the potential for future development in Manager Rocket 3000 to meet the specific needs of store owners and employees.
+- Authorize: `https://cloud.lightspeedapp.com/oauth/authorize.php`
+- Token: `https://cloud.lightspeedapp.com/oauth/access_token.php`
+- API: `https://api.lightspeedapp.com/API/V3`
 
-**Blast off with me to a whole new world of easy inventory management and beyond!**
+## Deploy
+
+GitHub Actions deploys to Cloudflare Workers on push to `master`.
+
+Repo secrets:
+
+| Secret | Purpose |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Workers deploy token |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account |
+| `LIGHTSPEED_CLIENT_ID` | OAuth client |
+| `LIGHTSPEED_CLIENT_SECRET` | OAuth secret |
+| `AUTH_SECRET` | Encrypts the session cookie |
+
+Manual:
+
+```sh
+npx wrangler secret put LIGHTSPEED_CLIENT_ID
+npx wrangler secret put LIGHTSPEED_CLIENT_SECRET
+npx wrangler secret put AUTH_SECRET
+npm run deploy
+```
+
+## Stack
+
+Vite + React 19 + Tailwind 4 on the client. Hono on a Cloudflare Worker for OAuth, session cookie, and Lightspeed proxy. Session is an encrypted httpOnly cookie — no database.

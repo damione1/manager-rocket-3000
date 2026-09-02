@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Avenir Next", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #14110f;
+  --color-panel: #1e1a17;
+  --color-line: #3a322c;
+  --color-cream: #f4d3a8;
+  --color-ok: #8fca8f;
+  --color-warn: #e6c07b;
+  --color-bad: #e07a6a;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-ink);
+  color: #f6efe6;
+  font-family: var(--font-sans);
+}
+
+input,
+button {
+  font: inherit;
+}
