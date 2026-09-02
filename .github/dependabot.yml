@@ -4,7 +4,14 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 5
+    # Majors (eslint 10, vite 8, …) need a coordinated bump; Dependabot
+    # already failed a typescript peer-dep update on this repo.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    open-pull-requests-limit: 5
