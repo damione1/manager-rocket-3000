@@ -9,6 +9,7 @@ import {
   loadProfile,
   lsApi,
   publicItem,
+  OAUTH_CALLBACK_PATH,
   redirectUri,
 } from "./lightspeed";
 import { clearSession, readSession, writeSession } from "./session";
@@ -61,7 +62,7 @@ app.get("/api/auth/login", async (c) => {
   );
 });
 
-app.get("/api/auth/callback", async (c) => {
+app.get(OAUTH_CALLBACK_PATH, async (c) => {
   const error = c.req.query("error");
   if (error) {
     return c.redirect(`/?error=${encodeURIComponent(error)}`);

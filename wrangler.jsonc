@@ -4,6 +4,16 @@
   "main": "./worker/index.ts",
   "compatibility_date": "2026-09-02",
   "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "manager-rocket-3000.damiengoehrig.ca",
+      "zone_name": "damiengoehrig.ca"
+    },
+    {
+      "pattern": "manager-rocket-3000.damiengoehrig.ca/*",
+      "zone_name": "damiengoehrig.ca"
+    }
+  ],
   "observability": {
     "enabled": true
   },

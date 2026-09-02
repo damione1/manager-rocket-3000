@@ -21,7 +21,7 @@ npm install
 npm run dev
 ```
 
-Lightspeed OAuth apps require HTTPS. Use a Cloudflare tunnel (`npx wrangler tunnel` / Vite plugin tunnel) or register `https://localhost:5173/api/auth/callback` if you terminate TLS locally.
+Lightspeed OAuth apps require HTTPS. Use a Cloudflare tunnel (`npx wrangler tunnel` / Vite plugin tunnel) or register `https://localhost:5173/api/auth/callback/lightspeed` if you terminate TLS locally. The production callback path matches the old NextAuth provider (`/api/auth/callback/lightspeed`).
 
 ## Lightspeed app
 
@@ -30,20 +30,20 @@ Register at [Lightspeed OAuth](https://cloud.lightspeedapp.com/oauth/register.ph
 Redirect URL:
 
 ```
-https://<your-worker>.workers.dev/api/auth/callback
+https://manager-rocket-3000.damiengoehrig.ca/api/auth/callback/lightspeed
 ```
 
 Scope: `employee:inventory`.
 
-Current OAuth endpoints (not the old `*.php` URLs):
+OAuth still uses the original R-Series PHP endpoints (the app was registered against these):
 
-- Authorize: `https://cloud.lightspeedapp.com/auth/oauth/authorize`
-- Token: `https://cloud.lightspeedapp.com/auth/oauth/token`
+- Authorize: `https://cloud.lightspeedapp.com/oauth/authorize.php`
+- Token: `https://cloud.lightspeedapp.com/oauth/access_token.php`
 - API: `https://api.lightspeedapp.com/API/V3`
 
 ## Deploy
 
-GitHub Actions deploys to Cloudflare Workers on push to `main`.
+GitHub Actions deploys to Cloudflare Workers on push to `master`.
 
 Repo secrets:
 

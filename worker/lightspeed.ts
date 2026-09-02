@@ -3,8 +3,8 @@ import { writeSession } from "./session";
 import type { Env, LightspeedItem, PublicItem, SessionData } from "./types";
 
 const API = "https://api.lightspeedapp.com/API/V3";
-const TOKEN_URL = "https://cloud.lightspeedapp.com/auth/oauth/token";
-const AUTHORIZE_URL = "https://cloud.lightspeedapp.com/auth/oauth/authorize";
+const TOKEN_URL = "https://cloud.lightspeedapp.com/oauth/access_token.php";
+const AUTHORIZE_URL = "https://cloud.lightspeedapp.com/oauth/authorize.php";
 const SCOPE = "employee:inventory";
 
 type AppContext = Context<{ Bindings: Env }>;
@@ -60,8 +60,10 @@ export function authorizeUrl(input: {
   return url.toString();
 }
 
+export const OAUTH_CALLBACK_PATH = "/api/auth/callback/lightspeed";
+
 export function redirectUri(c: AppContext): string {
-  return new URL("/api/auth/callback", c.req.url).toString();
+  return new URL(OAUTH_CALLBACK_PATH, c.req.url).toString();
 }
 
 export async function exchangeCode(
