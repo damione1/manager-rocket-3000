@@ -21,4 +21,4 @@ Lightspeed login needs HTTPS. Tunnel or local TLS if you are not hitting product
 
 ## Deploy
 
-Push to `master`. Secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `LIGHTSPEED_CLIENT_ID`, `LIGHTSPEED_CLIENT_SECRET`, `AUTH_SECRET`.
+Push to `master`. Secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CF_WEB_ANALYTICS_TOKEN`, `LIGHTSPEED_CLIENT_ID`, `LIGHTSPEED_CLIENT_SECRET`, `AUTH_SECRET`.
